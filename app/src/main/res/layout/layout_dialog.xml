@@ -48,6 +48,6 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
         android:textSize="28sp"
-        android:text="X" />
+        android:background="@android:drawable/btn_dialog" />
 
 </RelativeLayout>
