@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -34,10 +35,6 @@ public class MainActivity extends AppCompatActivity implements MainView{
     private int currentItem = 0;
     boolean flag = false;
 
-
-    Adapter adapter;
-
-
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +49,6 @@ public class MainActivity extends AppCompatActivity implements MainView{
 
         recyclerViewImages.setLayoutManager(new GridLayoutManager(MainActivity.this,
                 GetNumOfColumns.calculateNoOfColumns(MainActivity.this)));
-
-
 
     }
 
@@ -82,22 +77,20 @@ public class MainActivity extends AppCompatActivity implements MainView{
     @Override
     public void populateImages(final Adapter adapter) {
         recyclerViewImages.setAdapter(adapter);
-
-
-        recyclerViewImages.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+        progressBar.setVisibility(View.GONE);
+        recyclerViewImages.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 GridLayoutManager gm = (GridLayoutManager) recyclerViewImages.getLayoutManager();
-
                 visibleItem = gm.findLastVisibleItemPosition() + 1;
-
-                if(flag == true)
-                    progressBar.setVisibility(View.GONE);
                 if(visibleItem == adapter.getItemCount()){
                     flag = true;
                 }
+                if(flag)
+                    progressBar.setVisibility(View.GONE);
                 else if(currentItem != 0 && currentItem == visibleItem &&
-                        visibleItem < adapter.getItemCount() && !flag){
+                        visibleItem < adapter.getItemCount()
+                        && newState == recyclerView.SCROLL_STATE_DRAGGING &&  !flag){
                     progressBar.setIndeterminate(true);
                     progressBar.setVisibility(View.VISIBLE);
                 }
@@ -105,9 +98,7 @@ public class MainActivity extends AppCompatActivity implements MainView{
                     progressBar.setVisibility(View.GONE);
                 }
                 currentItem = visibleItem;
-
             }
-
         });
     }
 }

@@ -4,12 +4,11 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Matrix;
-import android.graphics.PointF;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.util.DisplayMetrics;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -18,8 +17,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 
 import java.io.IOException;
 
@@ -31,14 +28,10 @@ import ashu.astrodemo.network.NetworkClass;
 import ashu.astrodemo.network.NetworkService;
 import ashu.astrodemo.view.MainView;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
-/**
- * Created by apple on 28/04/18.
- */
 
 public class MainPresenter{
 
@@ -49,20 +42,7 @@ public class MainPresenter{
 
     Adapter adapter;
 
-    private static final float MIN_ZOOM = 1f,MAX_ZOOM = 1f;
-
-    // These matrices will be used to scale points of the image
-    Matrix matrix = new Matrix();
-    Matrix savedMatrix = new Matrix();
-
-    static final int NONE = 0;
-    static final int DRAG = 1;
-    static final int ZOOM = 2;
-    int mode = NONE;
-
-    PointF start = new PointF();
-    PointF mid = new PointF();
-    float oldDist = 1f;
+    boolean dialogShown = false;
 
     public MainPresenter(Context context, MainView mainView){
         this.context = context;
@@ -73,6 +53,7 @@ public class MainPresenter{
         this.mainView = null;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void fetchImages(){
         NetworkClass networkClass = new NetworkClass();
         Retrofit retrofit = networkClass.start();
@@ -82,11 +63,14 @@ public class MainPresenter{
         pd.setCancelable(false);
         pd.setMessage("Fetching Images ...");
         pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.setIndeterminateDrawable(context.getDrawable(R.drawable.custom_load));
         pd.setProgress(0);
         pd.setMax(100);
         pd.show();
         NetworkService networkInterface = retrofit.create(NetworkService.class);
-        Call<ResponseDTO> resultDTOCall = networkInterface.getListOfImages();
+        Call<ResponseDTO> resultDTOCall= networkInterface.getListOfImages();
+
+
         new NetworkBackgroundCall().execute(resultDTOCall);
     }
 
@@ -118,11 +102,23 @@ public class MainPresenter{
 
         @Override
         public void onItemClick(View view, int pos) {
+            if(!dialogShown) {
+                showDialog(pos);
+                dialogShown = true;
+            }
+            else {
+                dialogShown = false;
+                return;
+            }
+
+
+        }
+
+        private void showDialog(int pos){
             DisplayMetrics metrics = context.getResources().getDisplayMetrics();
 
             int DeviceTotalWidth = metrics.widthPixels;
             int DeviceTotalHeight = metrics.heightPixels;
-
             final Dialog dialog = new Dialog(context);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
@@ -149,6 +145,7 @@ public class MainPresenter{
             btnClose.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    dialogShown = false;
                     dialog.dismiss();
                 }
             });
@@ -156,7 +153,6 @@ public class MainPresenter{
 
             if(!dialog.isShowing())
                 dialog.show();
-
         }
 
         private int getWidth(){

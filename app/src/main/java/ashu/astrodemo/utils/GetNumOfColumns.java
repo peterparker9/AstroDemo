@@ -3,9 +3,6 @@ package ashu.astrodemo.utils;
 import android.content.Context;
 import android.util.DisplayMetrics;
 
-/**
- * Created by apple on 29/04/18.
- */
 
 public class GetNumOfColumns {
 

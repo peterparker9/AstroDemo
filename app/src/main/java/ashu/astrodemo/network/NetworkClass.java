@@ -9,9 +9,6 @@ import ashu.astrodemo.utils.Constants;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * Created by apple on 26/04/18.
- */
 
 public class NetworkClass {
 

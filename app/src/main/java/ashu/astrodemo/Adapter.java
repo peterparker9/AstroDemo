@@ -26,9 +26,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
-/**
- * Created by apple on 28/04/18.
- */
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>{
 
