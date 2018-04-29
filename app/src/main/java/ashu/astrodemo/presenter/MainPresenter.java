@@ -74,6 +74,18 @@ public class MainPresenter{
         new NetworkBackgroundCall().execute(resultDTOCall);
     }
 
+    public void onStart(){
+
+    }
+
+    public void onPause(){
+
+    }
+
+    public void onResume(){
+
+    }
+
 
     class NetworkBackgroundCall extends AsyncTask<Call, Void, ResponseDTO> implements Adapter.ItemClickListener{
         Response<ResponseDTO> responseDTO;
@@ -170,7 +182,5 @@ public class MainPresenter{
 
             return height;
         }
-
-
     }
 }
