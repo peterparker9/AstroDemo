@@ -27,3 +27,11 @@ Components used:
 Architecture
 
 - Used MVP
+
+Limitation
+
+- Since no of images available for above api is always 20, loading indicator showing loading of image is for very small duration
+
+- If in api, page number is mentioned, next set of images can be properly fetched and added to recyclerview using notifydatasetchanged. (Loading indicator would be for more time). Hence proper and advantageous pagination
+
+
